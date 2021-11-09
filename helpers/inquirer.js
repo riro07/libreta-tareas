@@ -34,7 +34,7 @@ const preguntas = [
             },
             {
                 value: '0',
-                name: `${'0 '.gray} Salir`
+                name: `${'0.'.gray} Salir`
             }
 
         ]
@@ -52,12 +52,9 @@ const inquirerMenu = async () => {
     
     const { opcion } = await inquirer.prompt(preguntas);
     
-    
-
     return opcion;
 
 }
-
 
 const pausa = async () => {
 
@@ -73,23 +70,53 @@ const pausa = async () => {
 
 }
 
-// const ejemplo = () => {
-// 
-//     return new Promise( resolve =>{
-//         
-//         const question = [
-//             {
-//                 type: 'input',
-//                 name: 'opcion',
-//                 message: `Presione ${'ENTER'.green} para continuar`
-//             }
-//         ];
-//         
-//         resolve( inquirer.prompt(question) );
-// 
-//     })
-// 
-// };
+const menuBorrar = async ( tareas = [] ) => {
+
+    const choices = tareas.map(( tarea, index ) =>{
+        
+        const idx = `${index+1}.`.green;
+        
+        return {
+            value: tarea.id,
+            name: `${idx} ${tarea.desc}`
+        }
+    });
+
+    choices.unshift({
+        value: '0',
+        name: '0.'.green + ' Atras'
+    });
+
+    //choices.push({value: '0', name: `${'0.'.green} Salir`});
+
+    const preguntas = [
+        {
+            type: 'list',
+            name: 'id',
+            message: 'borrar',
+            choices
+        }
+    ]
+
+    const { id } = await inquirer.prompt( preguntas );
+    return id;
+
+};
+
+const confirmacion = async ( message )=>{
+
+    const confirma = [
+        {
+            type: 'confirm',
+            name: 'validar',
+            message
+        }
+    ]
+
+    const { validar } = await inquirer.prompt( confirma );
+    return validar;
+
+}
 
 const leerInput = async ( message ) => {
 
@@ -107,7 +134,7 @@ const leerInput = async ( message ) => {
             }
         }
     ]
-
+    
     // Recibe un objeto. La desestructuración toma la propiedad del mismo.
     const { desc } = await inquirer.prompt( question );
     
@@ -115,10 +142,38 @@ const leerInput = async ( message ) => {
 
 };
 
+const completarTarea = async ( tareas = [] ) =>{
+
+    const choices = tareas.map(( tarea, index ) =>{
+        
+        const idx = `${index+1}.`.green;
+        
+        return {
+            value: tarea.id,
+            name: `${idx} ${tarea.desc}`,
+            checked: ( tarea.completadoEn )? true : false
+        }
+    });
+
+    const pregunta = [
+        {
+            type: 'checkbox',
+            name: 'ids',
+            message: 'Selecciones',
+            choices
+        }
+    ]
+
+    const { ids } = await inquirer.prompt( pregunta );
+    return ids;
+
+}
 
 module.exports = {
     inquirerMenu,
     pausa,
     leerInput,
-    //ejemplo
+    menuBorrar,
+    confirmacion,
+    completarTarea
 }

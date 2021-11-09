@@ -5,40 +5,13 @@ const {
     inquirerMenu, 
     pausa, 
     leerInput, 
-    ejemplo
+    menuBorrar,
+    confirmacion,
+    completarTarea
 } = require('./helpers/inquirer');
 
 //const Tarea = require('./models/terea');
 const Tareas = require('./models/tareas');
-
-// console.clear();
-
-// const tarea1 = new Tarea('Debo seguir hasta que no pueda mas, hasta que no pueda mas.');
-// const tarea2 = new Tarea('Debo seguir hasta que todo termine, hasta que todo termine.');
-// const tarea3 = new Tarea('Debo seguir hasta mi corazon no pueda mas, hasta que no pueda mas.');
-// 
-// console.log(tarea1);
-// console.log(tarea2);
-// console.log(tarea3);
-// 
-// const tareas = new Tareas();
-// tareas._listado[tarea1.id] = tarea1;
-// tareas._listado[tarea2.id] = tarea2;
-// tareas._listado[tarea3.id] = tarea3;
-// 
-// console.log(tareas);
-// 
-// console.log(tareas.listadoArr);
-
-// const ejemp1 = {
-//     ejemplo: 'Hola mami',
-//     ejemplo2: 2
-// }
-// 
-// const ejem = Object.assign({}, ejemp1);
-// 
-// console.log(ejem)
-
 
 // Programa ejecutando
 const main = async () => {
@@ -52,7 +25,7 @@ const main = async () => {
         tareas.cargarTareasDBArray( tareasDB );
     };
 
-    await pausa();
+    //await pausa();
 
     do {
 
@@ -61,30 +34,39 @@ const main = async () => {
 
         // Interacción con el menú 
         switch ( opt ) {
-            case '1':
-                // Crear tarea
+            case '1': // Crear tarea
                 const desc = await leerInput('Descripción: ');
                 tareas.crearTarea( desc );
             break;
     
-            case '2':
-                // Ver listado de tareas
+            case '2': // Ver listado de tareas
                 tareas.listadoCompleto();
             break;
 
-            case '3':
-                tareas.tareasCompletadasPendientes();
+            case '3': // Listado tareas completas
+                tareas.tareasCompletadasPendientes(true);
             break;
             
-            case '4':
+            case '4': // Listado tareas pendientes
                 tareas.tareasCompletadasPendientes(false);
             break;
                 
-            case '5':
-                
+            case '5': // Toggle completado | pendiente
+                const ids = await completarTarea( tareas.listadoArr );
+                tareas.toggleTareas( ids );
             break;
 
-            case '6':
+            case '6': // Borrar
+                //console.log( tareas.listadoArr );
+                const id = await menuBorrar( tareas.listadoArr );
+                
+                if ( !(id === '0')){
+                    const valor = await confirmacion('¿Estás seguro de eliminar está tarea?');
+                    if (valor == true){
+                        tareas.borrarTarea( id );
+                        console.log('Tarea borrada');
+                    }
+                };
                 
             break;
             
